@@ -1,5 +1,5 @@
-const PORT = process.env.PORT || 8080;
 const slugLen = 6; // sets length of short URL slugs
+const PORT = process.env.PORT || 8080;
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
@@ -126,6 +126,16 @@ app.post("/urls", (req, res) => {
   urlDatabase.addURL(slug, longURL);
 
   res.redirect(`/urls/${slug}`);
+});
+
+//Accepts POST requests to register a user in the database
+app.post("/register", (req, res) => {
+  let { email, password } = req.body;
+  console.log(email, password);
+  let newUserId = users.addUser(email, password);
+  res.cookie("user_id", newUserId);
+  console.log(users);
+  res.redirect(`/urls`);
 });
 
 //Accepts POST requests to log user in by sending them a cookie
