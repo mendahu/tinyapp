@@ -11,14 +11,6 @@ const generateRandomString = function() {
   return string.slice(string.length - 6);
 };
 
-console.log(generateRandomString());
-console.log(generateRandomString());
-console.log(generateRandomString());
-console.log(generateRandomString());
-console.log(generateRandomString());
-console.log(generateRandomString());
-console.log(generateRandomString());
-
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -53,7 +45,9 @@ app.get("/", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  let shortenedURL = generateRandomString();
+  console.log(shortenedURL);
+  res.send(`Status code: ${res.statusCode} - Ok, your URL is: ${shortenedURL}`);
 });
 
 app.listen(PORT, () => {
