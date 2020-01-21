@@ -69,7 +69,6 @@ app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
 
   let shortenedURL = generateRandomString();
-  console.log(shortenedURL);
 
   let longURL = req.body["longURL"];
   let prefix = longURL.slice(0, 7);
@@ -81,6 +80,17 @@ app.post("/urls", (req, res) => {
   urlCounter[shortenedURL] = 0;
 
   res.redirect(`/urls/${shortenedURL}`);
+});
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let slug = req.params.shortURL;
+  if (slug in urlDatabase) {
+    delete urlDatabase[slug];
+    res.redirect("../../urls");
+  } else {
+    let templateVars = { badURL: slug };
+    res.render("urls_error", templateVars);
+  }
 });
 
 app.listen(PORT, () => {
