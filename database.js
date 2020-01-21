@@ -29,10 +29,9 @@ const urlDatabase = {
     let userURLs = {};
     for (const url in urlDatabase) {
       if (this[url].userId === userId) {
-        userURLs[url] === this[url];
+        userURLs[url] = this[url];
       }
     }
-    console.log(userURLs);
     return userURLs;
   }
 };
