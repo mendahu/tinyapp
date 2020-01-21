@@ -86,11 +86,37 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let slug = req.params.shortURL;
   if (slug in urlDatabase) {
     delete urlDatabase[slug];
-    res.redirect("../../urls");
+    res.redirect("../");
   } else {
     let templateVars = { badURL: slug };
     res.render("urls_error", templateVars);
   }
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+
+  let shortURL = req.params.shortURL;
+  let longURL = req.body["newURL"];
+  
+  let prefix = longURL.slice(0, 7);
+
+  if (shortURL in urlDatabase) {
+
+    if (!(prefix === "http://")) {
+      longURL = "http://" + longURL;
+    }
+    urlDatabase[shortURL] = longURL;
+    res.redirect("./");
+
+  } else {
+
+    let templateVars = { badURL: shortURL };
+    res.render("urls_error", templateVars);
+  }
+
+
+
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.listen(PORT, () => {
