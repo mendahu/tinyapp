@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-const { generateRandomString } = require('helper')
+const { generateRandomString } = require('./helper');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
@@ -9,17 +9,6 @@ const PORT = 8080;
 app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
-
-
-const generateRandomString = function() {
-  const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let randomString = "";
-  for (let i = 0; i < 6; i++) {
-    let randomInd = Math.floor(Math.random() * 62);
-    randomString += chars[randomInd];
-  }
-  return randomString;
-};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -131,7 +120,7 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   console.log(req.body);  // Log the POST request body to the console
 
-  let shortenedURL = generateRandomString();
+  let shortenedURL = generateRandomString(6);
 
   let longURL = req.body["longURL"];
   let prefix = longURL.slice(0, 7);
