@@ -23,15 +23,16 @@
           </tr>
         </thead>
         <tbody>
-          <% for (let url in urls) { %>
+          <% for (let slug in urlDatabase) { 
+            if (urlDatabase[slug].url) { %>
             <tr>
-              <td><%= url %></td>
-              <td><%= urls[url].url %></td>
-              <td><%= urls[url].count %></td>
-              <td><a href="/urls/<%= url %>" class="btn btn-success">Edit</a></td>
-              <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
+              <td><%= slug %></td>
+              <td><%= urlDatabase[slug].url %></td>
+              <td><%= urlDatabase[slug].count %></td>
+              <td><a href="/urls/<%= slug %>" class="btn btn-success">Edit</a></td>
+              <td><form method="POST" action="/urls/<%= slug %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             </tr>
-          <% } %>
+          <% }; } %>
         </tbody>
       </table>
     </main>

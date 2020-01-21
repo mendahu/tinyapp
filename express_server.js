@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { generateRandomString } = require('./helper');
-const { urlDatabase, incrCount, delURL } = require('./database');
+const { urlDatabase } = require('./database');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
@@ -20,7 +20,7 @@ app.get("/u/:shortURL", (req, res) => {
     let longURL = urlDatabase[slug].url;
 
     //increment count of redirects, send user on their way
-    incrCount(slug);
+    urlDatabase.incrCount(slug);
     res.redirect(longURL);
 
   //if URL doesn't exist, send user to error page
@@ -55,7 +55,7 @@ app.get("/urls/:shortURL", (req, res) => {
 //Redirects to index page of all shortened URLs
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
+    urlDatabase,
     username: req.cookies["username"]
   };
   res.render("urls_index", templateVars);
@@ -73,7 +73,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   //check if URL exists
   if (slug in urlDatabase) {
     //delete the entry and redirect to index
-    delURL(slug);
+    urlDatabase.delURL(slug);
     res.redirect("../");
 
   //otherwise send the user to the error page
