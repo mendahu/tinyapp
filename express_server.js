@@ -123,7 +123,6 @@ app.post("/urls", (req, res) => {
 //Accepts POST requests to log user in by sending them a cookie
 app.post("/login", (req, res) => {
   res.cookie("username", req.body.username);
-  
   res.redirect(`/urls`);
 });
 
