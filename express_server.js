@@ -1,12 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
-const app = express();
-app.use(cookieParser());
-const PORT = 8080;
+const { generateRandomString } = require('helper')
 
+//fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
+const app = express();
+const PORT = 8080;
+app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+
 
 const generateRandomString = function() {
   const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
