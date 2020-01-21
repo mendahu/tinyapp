@@ -6,6 +6,19 @@ const PORT = 8080;
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
+const generateRandomString = function() {
+  let string = Math.floor((1 + Math.random()) * 0x100000000).toString(36);
+  return string.slice(string.length - 6);
+};
+
+console.log(generateRandomString());
+console.log(generateRandomString());
+console.log(generateRandomString());
+console.log(generateRandomString());
+console.log(generateRandomString());
+console.log(generateRandomString());
+console.log(generateRandomString());
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
