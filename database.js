@@ -70,7 +70,7 @@ const users = {
     let userId = this.getUserIdByEmail(email);
     console.log(users);
     console.log(password);
-    return (bcrypt.compareSync(password, bcrypt.hashSync(password, 10)));
+    return (bcrypt.compareSync(password, this[userId].password));
   }
 
 };
