@@ -36,6 +36,11 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Redirects to new shorten URL page
 app.get("/urls/new", (req, res) => {
+
+  if (!req.body.user_id) {
+    res.redirect("/login");
+  }
+
   let templateVars = {
     user: users[req.cookies["user_id"]]
   };
