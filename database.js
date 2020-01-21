@@ -1,4 +1,5 @@
 const { generateRandomString } = require('./helper');
+const bcrypt = require('bcrypt');
 
 //"database" to store url index and redirect counts
 const urlDatabase = {
@@ -67,9 +68,9 @@ const users = {
 
   verifyPass(email, password) {
     let userId = this.getUserIdByEmail(email);
-    console.log(userId);
-    console.log(this);
-    return (this[userId]["password"] === password);
+    console.log(users);
+    console.log(password);
+    return (bcrypt.compareSync(password, bcrypt.hashSync(password, 10)));
   }
 
 };

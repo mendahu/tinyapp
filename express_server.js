@@ -3,6 +3,7 @@ const slugLen = 6; // sets length of short URL slugs
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const { generateRandomString } = require('./helper');
 const { urlDatabase, users } = require('./database');
 
@@ -194,8 +195,10 @@ app.post("/register", (req, res) => {
     return res.sendStatus(400);
   }
 
+  let hashedPassword = bcrypt.hashSync(password, 10);
+
   //creates new user in the database and returns their new unique User ID for strategic cookie purposes
-  let newUserId = users.addUser(email, password);
+  let newUserId = users.addUser(email, hashedPassword);
 
   res.cookie("user_id", newUserId);
   res.redirect(`/urls`);
@@ -211,7 +214,7 @@ app.post("/login", (req, res) => {
   }
   
   let userId = users.getUserIdByEmail(req.body.email) || false;
-  
+
   if (userId && users.verifyPass(email, password)) {
     res.cookie("user_id", userId);
     res.redirect(`/urls`);
