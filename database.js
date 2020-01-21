@@ -23,6 +23,17 @@ const urlDatabase = {
   //deletes a URL entry
   delURL: function(slug) {
     delete this[slug];
+  },
+
+  userURLs: function(userId) {
+    let userURLs = {};
+    for (const url in urlDatabase) {
+      if (this[url].userId === userId) {
+        userURLs[url] === this[url];
+      }
+    }
+    console.log(userURLs);
+    return userURLs;
   }
 };
 
