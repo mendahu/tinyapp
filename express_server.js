@@ -115,7 +115,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let userId = req.cookies["user_id"];
 
   if (!(urlDatabase[slug].userId === userId)) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
   
   //check if URL exists
@@ -140,11 +140,11 @@ app.post("/urls/:shortURL", (req, res) => {
   let userId = req.cookies["user_id"];
   
   if (!(urlDatabase[shortURL].userId === userId)) {
-    res.sendStatus(403);
+    return res.sendStatus(403);
   }
   
   let longURL = req.body["newURL"];
-  
+
   //if the URL exists, update it
   if (shortURL in urlDatabase) {
     urlDatabase.updateURL(shortURL, longURL);
