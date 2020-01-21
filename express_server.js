@@ -1,4 +1,4 @@
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const slugLen = 6; // sets length of short URL slugs
 const express = require("express");
 const bodyParser = require("body-parser");
