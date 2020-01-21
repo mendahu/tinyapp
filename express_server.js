@@ -22,9 +22,14 @@ const urlDatabase = {
 };
 
 app.get("/u/:shortURL", (req, res) => {
-  let shortURL = req.params.shortURL;
-  let longURL = urlDatabase[shortURL];
-  res.redirect(longURL);
+  let slug = req.params.shortURL;
+  if (slug in urlDatabase) {
+    let longURL = urlDatabase[slug];
+    res.redirect(longURL);
+  } else {
+    let templateVars = { badURL: slug };
+    res.render("urls_error", templateVars);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
