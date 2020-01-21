@@ -2,19 +2,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { generateRandomString } = require('./helper');
+const { urlDatabase } = require('./database');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
-const PORT = 8080;
 app.use(cookieParser());
 app.set("view engine", "ejs");
+const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
-
-//"database" to store url index and redirect counts
-const urlDatabase = {
-  "b2xVn2": { url: "http://www.lighthouselabs.ca", count: 0 },
-  "9sm5xK": { url: "http://www.google.com", count: 0 }
-};
 
 //Redirect routing that provides actual redirection service
 app.get("/u/:shortURL", (req, res) => {
