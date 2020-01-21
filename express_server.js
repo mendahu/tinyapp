@@ -10,21 +10,18 @@ app.use(cookieParser());
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 
+//"database" to store url index and redirect counts
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { url: "http://www.lighthouselabs.ca", count: 0 },
+  "9sm5xK": { url: "http://www.google.com", count: 0 }
 };
 
-const urlCounter = {
-  "b2xVn2": 0,
-  "9sm5xK": 0
-};
-
+//Redirect routing that provides actual redirection service
 app.get("/u/:shortURL", (req, res) => {
   let slug = req.params.shortURL;
   if (slug in urlDatabase) {
-    let longURL = urlDatabase[slug];
-    urlCounter[slug]++;
+    let longURL = urlDatabase[slug].url;
+    urlDatabase[slug].count++;
     res.redirect(longURL);
   } else {
     let templateVars = {
@@ -46,7 +43,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   let templateVars = {
     shortURL,
-    longURL: urlDatabase[shortURL],
+    longURL: urlDatabase[shortURL].url,
     username: req.cookies["username"]
   };
   res.render("urls_show", templateVars);
@@ -55,7 +52,6 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    counts: urlCounter,
     username: req.cookies["username"]
   };
   res.render("urls_index", templateVars);
@@ -100,7 +96,7 @@ app.post("/urls/:shortURL", (req, res) => {
     if (!(prefix === "http://")) {
       longURL = "http://" + longURL;
     }
-    urlDatabase[shortURL] = longURL;
+    urlDatabase[shortURL].url = longURL;
     res.redirect("./");
     
   } else {
@@ -128,8 +124,8 @@ app.post("/urls", (req, res) => {
     longURL = "http://" + longURL;
   }
 
-  urlDatabase[shortenedURL] = longURL;
-  urlCounter[shortenedURL] = 0;
+  urlDatabase[shortenedURL].url = longURL;
+  urlDatabase[shortenedURL].count = 0;
 
   res.redirect(`/urls/${shortenedURL}`);
 });

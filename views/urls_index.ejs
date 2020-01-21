@@ -26,8 +26,8 @@
           <% for (let url in urls) { %>
             <tr>
               <td><%= url %></td>
-              <td><%= urls[url] %></td>
-              <td><%= counts[url] %></td>
+              <td><%= urls[url].url %></td>
+              <td><%= urls[url].count %></td>
               <td><a href="/urls/<%= url %>" class="btn btn-success">Edit</a></td>
               <td><form method="POST" action="/urls/<%= url %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             </tr>
