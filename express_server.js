@@ -62,9 +62,16 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //Redirects to index page of all shortened URLs
 app.get("/urls", (req, res) => {
+
+  let userId = req.cookies["user_id"];
+
+  if (!userId) {
+    res.redirect("/login");
+  }
+
   let templateVars = {
     urlDatabase,
-    user: users[req.cookies["user_id"]]
+    user: users[userId]
   };
   res.render("urls_index", templateVars);
 });
