@@ -49,6 +49,10 @@ const users = {
     return false;
   },
 
+  verifyPass(email, password) {
+    return (this[this.getUserIdByEmail(email)].password === password);
+  }
+
 };
 
 module.exports = { urlDatabase, users };

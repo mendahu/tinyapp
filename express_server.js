@@ -159,12 +159,20 @@ app.post("/register", (req, res) => {
 
 //Accepts POST requests to log user in by sending them a cookie
 app.post("/login", (req, res) => {
-  let userId = users.getUserIdByEmail(req.body.email) || false;
+  let { email, password } = req.body;
 
-  if (userId) {
+  //Checks if email and/or password strings were empty
+  if (!(email || password)) {
+    return res.sendStatus(400);
+  }
+  
+  let userId = users.getUserIdByEmail(req.body.email) || false;
+  
+  if (userId && users.verifyPass(email, password)) {
     res.cookie("user_id", userId);
     res.redirect(`/urls`);
   } else {
+    res.sendStatus(403);
     res.redirect(`/urls`);
   }
 
