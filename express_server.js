@@ -18,11 +18,20 @@ const urlDatabase = {
 
 //Redirect routing that provides actual redirection service
 app.get("/u/:shortURL", (req, res) => {
+
   let slug = req.params.shortURL;
+
+  //check if the shortened URL actually exists
   if (slug in urlDatabase) {
     let longURL = urlDatabase[slug].url;
+
+    //increment count of redirects
     urlDatabase[slug].count++;
+
+    //send user on their way
     res.redirect(longURL);
+
+  //if URL doesn't exist, send user to error page
   } else {
     let templateVars = {
       badURL: slug,
