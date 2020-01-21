@@ -51,7 +51,19 @@ app.get("/urls/new", (req, res) => {
 
 //Redirects to view an existing shortened URL page
 app.get("/urls/:shortURL", (req, res) => {
+
+  let userId = req.cookies["user_id"];
+
+  if (!userId) {
+    res.redirect("/login");
+  }
+  
   let shortURL = req.params.shortURL;
+
+  if (!(urlDatabase[shortURL].userId === userId)) {
+    res.sendStatus(403);
+  }
+
   let templateVars = {
     shortURL,
     longURL: urlDatabase[shortURL].url,
