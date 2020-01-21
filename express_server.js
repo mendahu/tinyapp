@@ -2,13 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { generateRandomString } = require('./helper');
-const { urlDatabase } = require('./database');
+const { urlDatabase, incrCount } = require('./database');
+const PORT = 8080;
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
 app.use(cookieParser());
 app.set("view engine", "ejs");
-const PORT = 8080;
 app.use(bodyParser.urlencoded({extended: true}));
 
 //Redirect routing that provides actual redirection service
@@ -21,7 +21,7 @@ app.get("/u/:shortURL", (req, res) => {
     let longURL = urlDatabase[slug].url;
 
     //increment count of redirects
-    urlDatabase[slug].count++;
+    incrCount(slug);
 
     //send user on their way
     res.redirect(longURL);

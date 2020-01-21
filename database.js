@@ -4,4 +4,8 @@ const urlDatabase = {
   "9sm5xK": { url: "http://www.google.com", count: 0 }
 };
 
-module.exports = { urlDatabase };
+const incrCount = function(slug) {
+  urlDatabase[slug].count++;
+};
+
+module.exports = { urlDatabase, incrCount };
