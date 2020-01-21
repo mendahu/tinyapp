@@ -1,4 +1,5 @@
 const PORT = 8080;
+const slugLen = 6; // sets length of short URL slugs
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
@@ -16,7 +17,7 @@ app.get("/u/:shortURL", (req, res) => {
   let slug = req.params.shortURL;
 
   //check if the shortened URL actually exists
-  if (slug in urlDatabase) {
+  if (urlDatabase[slug]) {
     let longURL = urlDatabase[slug].url;
 
     //increment count of redirects, send user on their way
@@ -88,22 +89,16 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //accepts POST requests to edit existing shortened URLs
 app.post("/urls/:shortURL", (req, res) => {
-  
   let shortURL = req.params.shortURL;
   let longURL = req.body["newURL"];
-  
-  let prefix = longURL.slice(0, 7);
-  
+
+  //if the URL exists, update it
   if (shortURL in urlDatabase) {
-    
-    if (!(prefix === "http://")) {
-      longURL = "http://" + longURL;
-    }
-    urlDatabase[shortURL].url = longURL;
+    urlDatabase.updateURL(shortURL, longURL);
     res.redirect("./");
     
+  //otherwise send to error page
   } else {
-    
     let templateVars = {
       badURL: shortURL,
       username: req.cookies["username"]
@@ -111,26 +106,18 @@ app.post("/urls/:shortURL", (req, res) => {
     res.render("urls_error", templateVars);
   }
   
-  
-  
+  //send back to URL page
   res.redirect(`/urls/${shortURL}`);
 });
 
+//Accepts POST requests to add a new URL
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
-
-  let shortenedURL = generateRandomString(6);
-
+  let slug = generateRandomString(slugLen);
   let longURL = req.body["longURL"];
-  let prefix = longURL.slice(0, 7);
-  if (!(prefix === "http://")) {
-    longURL = "http://" + longURL;
-  }
 
-  urlDatabase[shortenedURL].url = longURL;
-  urlDatabase[shortenedURL].count = 0;
+  urlDatabase.addURL(slug, longURL);
 
-  res.redirect(`/urls/${shortenedURL}`);
+  res.redirect(`/urls/${slug}`);
 });
 
 //Accepts POST requests to log user in by sending them a cookie
