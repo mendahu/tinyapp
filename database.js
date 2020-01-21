@@ -40,14 +40,15 @@ const users = {
     return randomID;
   },
 
-  emailExists: function(email) {
+  getUserIdByEmail: function(email) {
     for (const user in this) {
-      if (this[user][email]) {
-        return true;
+      if (this[user]["email"] === email) {
+        return this[user]["id"];
       }
     }
     return false;
-  }
+  },
+
 };
 
 module.exports = { urlDatabase, users };

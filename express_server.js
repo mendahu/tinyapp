@@ -70,6 +70,14 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+//Redirects to login page
+app.get("/login", (req, res) => {
+  let templateVars = {
+    user: users[req.cookies["user_id"]]
+  };
+  res.render("login", templateVars);
+});
+
 //Will redirect to correct landing page based on login; for now goes to URL index
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -138,7 +146,7 @@ app.post("/register", (req, res) => {
   }
   
   //checks if email was already in use
-  if (users.emailExists(email)) {
+  if (users.getUserIdByEmail(email)) {
     return res.sendStatus(400);
   }
 
@@ -151,8 +159,15 @@ app.post("/register", (req, res) => {
 
 //Accepts POST requests to log user in by sending them a cookie
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username); //CHANGE
-  res.redirect(`/urls`);
+  let userId = users.getUserIdByEmail(req.body.email) || false;
+
+  if (userId) {
+    res.cookie("user_id", userId);
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/urls`);
+  }
+
 });
 
 //Accepts POST requests to log user out by deleting their cookie
