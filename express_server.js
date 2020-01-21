@@ -21,10 +21,16 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+const urlCounter = {
+  "b2xVn2": 0,
+  "9sm5xK": 0
+};
+
 app.get("/u/:shortURL", (req, res) => {
   let slug = req.params.shortURL;
   if (slug in urlDatabase) {
     let longURL = urlDatabase[slug];
+    urlCounter[slug]++;
     res.redirect(longURL);
   } else {
     let templateVars = { badURL: slug };
@@ -43,7 +49,7 @@ app.get("/urls/:shortURL", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase, counts: urlCounter };
   res.render("urls_index", templateVars);
 });
 
@@ -72,6 +78,7 @@ app.post("/urls", (req, res) => {
   }
 
   urlDatabase[shortenedURL] = longURL;
+  urlCounter[shortenedURL] = 0;
 
   res.redirect(`/urls/${shortenedURL}`);
 });
