@@ -8,4 +8,8 @@ const incrCount = function(slug) {
   urlDatabase[slug].count++;
 };
 
-module.exports = { urlDatabase, incrCount };
+const delURL = function(slug) {
+  delete urlDatabase[slug];
+};
+
+module.exports = { urlDatabase, incrCount, delURL };
