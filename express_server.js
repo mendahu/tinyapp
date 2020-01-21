@@ -4,7 +4,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { generateRandomString } = require('./helper');
-const { urlDatabase } = require('./database');
+const { urlDatabase, users } = require('./database');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
@@ -60,6 +60,14 @@ app.get("/urls", (req, res) => {
     username: req.cookies["username"]
   };
   res.render("urls_index", templateVars);
+});
+
+//Redirects to registration page
+app.get("/register", (req, res) => {
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("register", templateVars);
 });
 
 //Will redirect to correct landing page based on login; for now goes to URL index
