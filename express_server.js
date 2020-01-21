@@ -37,7 +37,9 @@ app.get("/u/:shortURL", (req, res) => {
 //Redirects to new shorten URL page
 app.get("/urls/new", (req, res) => {
 
-  if (!req.body.user_id) {
+  console.log(req.cookies.user_id);
+
+  if (!req.cookies.user_id) {
     res.redirect("/login");
   }
 
@@ -135,8 +137,9 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls", (req, res) => {
   let slug = generateRandomString(slugLen);
   let longURL = req.body["longURL"];
+  let userId = req.cookies.user_id;
 
-  urlDatabase.addURL(slug, longURL);
+  urlDatabase.addURL(slug, longURL, userId);
 
   res.redirect(`/urls/${slug}`);
 });

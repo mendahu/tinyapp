@@ -2,12 +2,12 @@ const { generateRandomString } = require('./helper');
 
 //"database" to store url index and redirect counts
 const urlDatabase = {
-  "b2xVn2": { url: "http://www.lighthouselabs.ca", count: 0 },
-  "9sm5xK": { url: "http://www.google.com", count: 0 },
+  "b2xVn2": { url: "http://www.lighthouselabs.ca", count: 0, userId: "0x000000" },
+  "9sm5xK": { url: "http://www.google.com", count: 0, userId: "0x000000" },
 
   //adds new URL
-  addURL: function(slug, longURL) {
-    this[slug] = { url: longURL, count: 0 };
+  addURL: function(slug, longURL, userId) {
+    this[slug] = { url: longURL, count: 0, userId };
   },
 
   //increments the count of a URL redirect
@@ -28,6 +28,12 @@ const urlDatabase = {
 
 //user database
 const users = {
+
+  "0x000000": {
+    email: "admin@admin.com",
+    password: "password",
+    id: "0x000000"
+  },
 
   //method adds new user given email and password. generates unique 8 digit alphanumeric ID
   addUser: function(email, password) {
@@ -50,7 +56,10 @@ const users = {
   },
 
   verifyPass(email, password) {
-    return (this[this.getUserIdByEmail(email)].password === password);
+    let userId = this.getUserIdByEmail(email);
+    console.log(userId);
+    console.log(this);
+    return (this[userId]["password"] === password);
   }
 
 };
