@@ -35,23 +35,37 @@ app.get("/u/:shortURL", (req, res) => {
     urlCounter[slug]++;
     res.redirect(longURL);
   } else {
-    let templateVars = { badURL: slug };
+    let templateVars = {
+      badURL: slug,
+      username: req.cookies["username"]
+    };
     res.render("urls_error", templateVars);
   }
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = {
+    username: req.cookies["username"]
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
-  let templateVars = { shortURL, longURL: urlDatabase[shortURL] };
+  let templateVars = {
+    shortURL,
+    longURL: urlDatabase[shortURL],
+    username: req.cookies["username"]
+  };
   res.render("urls_show", templateVars);
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase, counts: urlCounter };
+  let templateVars = {
+    urls: urlDatabase,
+    counts: urlCounter,
+    username: req.cookies["username"]
+  };
   res.render("urls_index", templateVars);
 });
 
@@ -65,6 +79,50 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/", (req, res) => {
   res.send("Hello");
+});
+
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  let slug = req.params.shortURL;
+  if (slug in urlDatabase) {
+    delete urlDatabase[slug];
+    res.redirect("../");
+  } else {
+    let templateVars = {
+      badURL: slug,
+      username: req.cookies["username"]
+    };
+    res.render("urls_error", templateVars);
+  }
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+  
+  let shortURL = req.params.shortURL;
+  let longURL = req.body["newURL"];
+  
+  let prefix = longURL.slice(0, 7);
+  
+  if (shortURL in urlDatabase) {
+    
+    if (!(prefix === "http://")) {
+      longURL = "http://" + longURL;
+    }
+    urlDatabase[shortURL] = longURL;
+    res.redirect("./");
+    
+  } else {
+    
+    let templateVars = {
+      badURL: shortURL,
+      username: req.cookies["username"]
+    };
+    res.render("urls_error", templateVars);
+  }
+  
+  
+  
+  res.redirect(`/urls/${shortURL}`);
 });
 
 app.post("/urls", (req, res) => {
@@ -84,41 +142,15 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortenedURL}`);
 });
 
-app.post("/urls/:shortURL/delete", (req, res) => {
-  let slug = req.params.shortURL;
-  if (slug in urlDatabase) {
-    delete urlDatabase[slug];
-    res.redirect("../");
-  } else {
-    let templateVars = { badURL: slug };
-    res.render("urls_error", templateVars);
-  }
+app.post("/login", (req, res) => {
+  res.cookie("username", req.body.username);
+  
+  res.redirect(`/urls`);
 });
 
-app.post("/urls/:shortURL", (req, res) => {
-
-  let shortURL = req.params.shortURL;
-  let longURL = req.body["newURL"];
-  
-  let prefix = longURL.slice(0, 7);
-
-  if (shortURL in urlDatabase) {
-
-    if (!(prefix === "http://")) {
-      longURL = "http://" + longURL;
-    }
-    urlDatabase[shortURL] = longURL;
-    res.redirect("./");
-
-  } else {
-
-    let templateVars = { badURL: shortURL };
-    res.render("urls_error", templateVars);
-  }
-
-
-
-  res.redirect(`/urls/${shortURL}`);
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect(`/urls`);
 });
 
 app.listen(PORT, () => {
