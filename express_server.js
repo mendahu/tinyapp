@@ -1,5 +1,5 @@
-const slugLen = 6; // sets length of short URL slugs
 const PORT = process.env.PORT || 8080;
+const slugLen = 6; // sets length of short URL slugs
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
@@ -28,7 +28,7 @@ app.get("/u/:shortURL", (req, res) => {
   } else {
     let templateVars = {
       badURL: slug,
-      username: req.cookies["username"]
+      user: users[req.cookies["user_id"]]
     };
     res.render("urls_error", templateVars);
   }
@@ -37,7 +37,7 @@ app.get("/u/:shortURL", (req, res) => {
 //Redirects to new shorten URL page
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
 });
@@ -48,7 +48,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL,
     longURL: urlDatabase[shortURL].url,
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -57,7 +57,7 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urlDatabase,
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_index", templateVars);
 });
@@ -65,7 +65,7 @@ app.get("/urls", (req, res) => {
 //Redirects to registration page
 app.get("/register", (req, res) => {
   let templateVars = {
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("register", templateVars);
 });
@@ -89,7 +89,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   } else {
     let templateVars = {
       badURL: slug,
-      username: req.cookies["username"]
+      user: users[req.cookies["user_id"]]
     };
     res.render("urls_error", templateVars);
   }
@@ -109,7 +109,7 @@ app.post("/urls/:shortURL", (req, res) => {
   } else {
     let templateVars = {
       badURL: shortURL,
-      username: req.cookies["username"]
+      user: users[req.cookies["user_id"]]
     };
     res.render("urls_error", templateVars);
   }
@@ -131,22 +131,33 @@ app.post("/urls", (req, res) => {
 //Accepts POST requests to register a user in the database
 app.post("/register", (req, res) => {
   let { email, password } = req.body;
-  console.log(email, password);
+
+  //Checks if email and/or password strings were empty
+  if (!(email || password)) {
+    return res.sendStatus(400);
+  }
+  
+  //checks if email was already in use
+  if (users.emailExists(email)) {
+    return res.sendStatus(400);
+  }
+
+  //creates new user in the database and returns their new unique User ID for strategic cookie purposes
   let newUserId = users.addUser(email, password);
+
   res.cookie("user_id", newUserId);
-  console.log(users);
   res.redirect(`/urls`);
 });
 
 //Accepts POST requests to log user in by sending them a cookie
 app.post("/login", (req, res) => {
-  res.cookie("username", req.body.username);
+  res.cookie("username", req.body.username); //CHANGE
   res.redirect(`/urls`);
 });
 
 //Accepts POST requests to log user out by deleting their cookie
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  res.clearCookie("user_id");
   res.redirect(`/urls`);
 });
 

@@ -26,14 +26,10 @@ const urlDatabase = {
   }
 };
 
-
+//user database
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
-  },
 
+  //method adds new user given email and password. generates unique 8 digit alphanumeric ID
   addUser: function(email, password) {
     let randomID = generateRandomString(8);
     this[randomID] = {
@@ -42,8 +38,16 @@ const users = {
       id: randomID,
     };
     return randomID;
-  }
+  },
 
+  emailExists: function(email) {
+    for (const user in this) {
+      if (this[user][email]) {
+        return true;
+      }
+    }
+    return false;
+  }
 };
 
 module.exports = { urlDatabase, users };
