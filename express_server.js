@@ -59,7 +59,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
   
   let shortURL = req.params.shortURL;
-
+  
   if (!(urlDatabase[shortURL].userId === userId)) {
     res.sendStatus(403);
   }
@@ -112,7 +112,12 @@ app.get("/", (req, res) => {
 //accepts POST request to delete URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
   let slug = req.params.shortURL;
+  let userId = req.cookies["user_id"];
 
+  if (!(urlDatabase[slug].userId === userId)) {
+    res.sendStatus(403);
+  }
+  
   //check if URL exists
   if (slug in urlDatabase) {
     //delete the entry and redirect to index
@@ -132,8 +137,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //accepts POST requests to edit existing shortened URLs
 app.post("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
+  let userId = req.cookies["user_id"];
+  
+  if (!(urlDatabase[shortURL].userId === userId)) {
+    res.sendStatus(403);
+  }
+  
   let longURL = req.body["newURL"];
-
+  
   //if the URL exists, update it
   if (shortURL in urlDatabase) {
     urlDatabase.updateURL(shortURL, longURL);
@@ -154,9 +165,15 @@ app.post("/urls/:shortURL", (req, res) => {
 
 //Accepts POST requests to add a new URL
 app.post("/urls", (req, res) => {
+
+  let userId = req.cookies["user_id"];
+
+  if (!userId) {
+    res.sendStatus(403);
+  }
+
   let slug = generateRandomString(slugLen);
   let longURL = req.body["longURL"];
-  let userId = req.cookies.user_id;
 
   urlDatabase.addURL(slug, longURL, userId);
 
