@@ -92,18 +92,20 @@ app.get("/urls", (req, res) => {
 
 //Redirects to registration page
 app.get("/register", (req, res) => {
-  let templateVars = {
-    user: users[req.session.user_id]
-  };
-  res.render("register", templateVars);
+  let userId = req.session.user_id; //gets userId from login cookie
+
+  (userId)
+    ? res.redirect("/urls")
+    : res.render("register", { user: users[req.session.user_id] });
 });
 
 //Redirects to login page
 app.get("/login", (req, res) => {
-  let templateVars = {
-    user: users[req.session.user_id]
-  };
-  res.render("login", templateVars);
+  let userId = req.session.user_id; //gets userId from login cookie
+
+  (userId)
+    ? res.redirect("/urls")
+    : res.render("login", { user: users[req.session.user_id] });
 });
 
 //Redirects to either /urls or /login depending on if user is logged in or not
@@ -113,7 +115,6 @@ app.get("/", (req, res) => {
   (userId)
     ? res.redirect("/urls")
     : res.redirect("/login");
-    
 });
 
 /*****************
@@ -122,34 +123,29 @@ POST ROUTING
 
 //accepts POST request to delete URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
-  let slug = req.params.shortURL;
-  let userId = req.session.user_id;
+  let userId = req.session.user_id; //gets userId from login cookie
+  let user = users[userId];
+  let shortURL = req.params.shortURL;
 
-  if (!(urlDatabase[slug].userId === userId)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
-    };
-
-    res.status(403);
-    return res.render("error", templateVars);
+  //Check if the URL actually exists
+  if (!urlDatabase[shortURL]) {
+    let errorCode = 404;
+    let errorMsg = "The shortened URL you're trying to delete doesn't exist!";
+    res.status(errorCode);
+    return res.render("error", { user, errorMsg, errorCode });
   }
   
-  //check if URL exists
-  if (slug in urlDatabase) {
-    //delete the entry and redirect to index
-    urlDatabase.delURL(slug);
-    res.redirect("../");
-
-  //otherwise send the user to the error page
-  } else {
-    let templateVars = {
-      badURL: slug,
-      user: users[req.session.user_id]
-    };
-    res.render("urls_error", templateVars);
+  //Check for credentials
+  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+    let errorCode = 403;
+    let errorMsg = "You must be logged in to delete shortened URLs!";
+    res.status(403);
+    return res.render("error", { user, errorMsg, errorCode });
   }
+  
+  //Delete the URL and redirect the user
+  urlDatabase.delURL(shortURL);
+  res.redirect("../");
 });
 
 //accepts POST requests to edit existing shortened URLs
@@ -239,35 +235,17 @@ app.post("/register", (req, res) => {
 //Accepts POST requests to log user in by sending them a cookie
 app.post("/login", (req, res) => {
   let { email, password } = req.body;
+  let userId = users.getUserIdByEmail(email) || false;
 
-  //Checks if email and/or password strings were empty
-  if (!(email || password)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 400,
-      errorMsg: "Either your email or password fields were empty! Try again."
-    };
-
-    res.status(400);
-    return res.render("error", templateVars);
-  }
-  
-  let userId = users.getUserIdByEmail(req.body.email) || false;
-
-  if (userId && users.verifyPass(email, password)) {
-    req.session["user_id"] = userId;
-    res.redirect(`/urls`);
-  } else {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "Incorrect username or password. Please try again!"
-    };
-
-    res.status(403);
-    return res.render("error", templateVars);
+  if (!(userId && users.verifyPass(email, password))) {
+    let errorCode = 403;
+    let errorMsg = "Incorrect username or password. Please try again!";
+    res.status(errorCode);
+    return res.render("error", { user: "", errorMsg, errorCode });
   }
 
+  req.session["user_id"] = userId;
+  res.redirect(`/urls`);
 });
 
 //Accepts POST requests to log user out by deleting their cookie
