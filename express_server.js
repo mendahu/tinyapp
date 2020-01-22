@@ -25,7 +25,7 @@ app.get("/u/:shortURL", (req, res) => {
   let slug = req.params.shortURL;
 
   //check if the shortened URL actually exists
-  if (urlDatabase[slug]) {
+  if (urlDatabase[slug].slug === slug) {
     let longURL = urlDatabase[slug].url;
 
     //log a cookie with a unique id
@@ -70,7 +70,7 @@ app.get("/urls/:shortURL", (req, res) => {
     let templateVars = {
       user: users[req.session.user_id],
       errorCode: 403,
-      errorMsg: "You must be loggedd in to view or edit your shortened URLs!"
+      errorMsg: "You must be logged in to view or edit your shortened URLs!"
     };
 
     res.status(403);
@@ -101,10 +101,12 @@ app.get("/urls/:shortURL", (req, res) => {
     return res.render("error", templateVars);
   }
 
+  console.log(urlDatabase[shortURL].visitCount);
+
   let templateVars = {
     shortURL,
     date: urlDatabase[shortURL].date,
-    count: urlDatabase[shortURL].count,
+    count: urlDatabase[shortURL].visitCount,
     longURL: urlDatabase[shortURL].url,
     user: users[req.session.user_id]
   };

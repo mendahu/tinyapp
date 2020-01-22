@@ -1,4 +1,4 @@
-const { generateRandomString } = require('./helper');
+const { User, Url } = require('./classes');
 const bcrypt = require('bcrypt');
 
 //"database" to store url index and redirect counts
@@ -6,16 +6,9 @@ const urlDatabase = {
 
   //adds new URL
   addURL: function(slug, longURL, userId) {
-    let dateStamp = new Date();
-    let year = dateStamp.getFullYear();
-    let month = dateStamp.getMonth() + 1;
-    let day = dateStamp.getDate();
-    this[slug] = {
-      userId,
-      url: longURL,
-      date: year + "/" + month + "/" + day,
-      visits: []
-    };
+    let newUrl = new Url(slug, longURL, userId);
+    let newUrlSlug = newUrl.slug;
+    this[newUrlSlug] = newUrl;
   },
 
   //increments the count of a URL redirect
@@ -54,13 +47,10 @@ const users = {
 
   //method adds new user given email and password. generates unique 8 digit alphanumeric ID
   addUser: function(email, password) {
-    let randomID = generateRandomString(8);
-    this[randomID] = {
-      email,
-      password,
-      id: randomID,
-    };
-    return randomID;
+    let newUser = new User(email, password);
+    let newUserId = newUser.id;
+    this[newUserId] = newUser;
+    return newUserId;
   },
 
   getUserIdByEmail: function(email) {
