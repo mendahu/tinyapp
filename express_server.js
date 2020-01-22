@@ -47,7 +47,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get("/urls/new", (req, res) => {
 
   if (!req.session.user_id) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
   let templateVars = {
@@ -62,7 +62,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id;
 
   if (!userId) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
   
   let shortURL = req.params.shortURL;
@@ -93,7 +93,7 @@ app.get("/urls", (req, res) => {
   let userId = req.session.user_id;
 
   if (!userId) {
-    res.redirect("/login");
+    return res.redirect("/login");
   }
 
   let templateVars = {
@@ -177,7 +177,6 @@ app.post("/urls/:shortURL", (req, res) => {
   //if the URL exists, update it
   if (shortURL in urlDatabase) {
     urlDatabase.updateURL(shortURL, longURL);
-    res.redirect("./");
     
   //otherwise send to error page
   } else {
@@ -185,7 +184,7 @@ app.post("/urls/:shortURL", (req, res) => {
       badURL: shortURL,
       user: users[req.session.user_id]
     };
-    res.render("urls_error", templateVars);
+    return res.render("urls_error", templateVars);
   }
   
   //send back to URL page
@@ -291,6 +290,17 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect(`/urls`);
+});
+
+app.get("*", (req, res) => {
+  let templateVars = {
+    user: users[req.session.user_id],
+    errorCode: 404,
+    errorMsg: "The page you requested doesn't exist!"
+  };
+
+  res.status(404);
+  return res.render("error", templateVars);
 });
 
 //Server listen
