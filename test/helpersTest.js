@@ -16,8 +16,6 @@ describe('Helper Functions', function() {
 //Create a test user
 const testUserId = users.addUser("test@test.com", bcrypt.hashSync("test", 10));
 
-console.log(users);
-
 describe('Users Database', function() {
 
   it('addUser should create a new user object with an email property', function() {
@@ -76,8 +74,6 @@ describe('Users Database', function() {
 });
 
 urlDatabase.addURL("w4hf8U", "http://www.wemartians.com", testUserId);
-
-console.log(urlDatabase);
 
 describe('URL Database', function() {
 
