@@ -3,12 +3,14 @@ const bcrypt = require('bcrypt');
 
 //"database" to store url index and redirect counts
 const urlDatabase = {
-  "b2xVn2": { url: "http://www.lighthouselabs.ca", count: 0, userId: "0x000000" },
-  "9sm5xK": { url: "http://www.google.com", count: 0, userId: "0x000000" },
 
   //adds new URL
   addURL: function(slug, longURL, userId) {
-    this[slug] = { url: longURL, count: 0, userId };
+    let dateStamp = new Date();
+    let year = dateStamp.getFullYear();
+    let month = dateStamp.getMonth() + 1;
+    let day = dateStamp.getDate();
+    this[slug] = { url: longURL, count: 0, date: year + "/" + month + "/" + day, userId };
   },
 
   //increments the count of a URL redirect
