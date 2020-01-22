@@ -11,7 +11,10 @@
   <body>
     <%- include('./partials/_header') %>
     <main style="margin: 1em;">
-      <h3>Login to TinyApp!</h3>
+      <div class="container">
+      <img src="./assets/tinyapplogo.png" alt="TinyApp Logo" class="mx-auto d-block">
+      <h3 class="text-center">Welcome to TinyApp!</h3>
+      <h5 class="text-center">Please login to continue</h5>
       <form action="/login" method="POST">
         <div class="form-group">
             <label for="email">Email address</label>
@@ -21,9 +24,9 @@
             <label for="password">Password</label>
             <input type="password" class="form-control" name="password" placeholder="Enter password">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Login</button>
       </form>
-      
+      </div>
     </main>
     <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

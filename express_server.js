@@ -18,6 +18,7 @@ app.use(cookieSession({
 }));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static('views'));
 
 //Redirect routing that provides actual redirection service
 app.get("/u/:shortURL", (req, res) => {
