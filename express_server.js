@@ -34,7 +34,7 @@ app.get("/u/:shortURL", (req, res) => {
     //log a cookie with a unique id
     if (!req.cookies) {
       let string = generateRandomString(10);
-      res.cookie("visitor_id", string);
+      res.cookie("visitor_id", string, { maxAge: 31536000});
       visitorId = string;
     } else {
       visitorId = req.cookies["visitor_id"];
@@ -65,50 +65,28 @@ app.get("/urls/new", (req, res) => {
 
 //Redirects to view an existing shortened URL page
 app.get("/urls/:shortURL", (req, res) => {
-
-  let userId = req.session.user_id;
-
-  if (!userId) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "You must be logged in to view or edit your shortened URLs!"
-    };
-
-    res.status(403);
-    return res.render("error", templateVars);
-  }
-  
+  let userId = req.session.user_id; //gets userId from login cookie
+  let user = users[userId];
   let shortURL = req.params.shortURL;
 
+  //Check if the URL actually exists
   if (!urlDatabase[shortURL]) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 404,
-      errorMsg: "That shortened URL doesn't exist!"
-    };
-
-    res.status(404);
-    return res.render("error", templateVars);
+    let errorCode = 404;
+    let errorMsg = "That shortened URL doesn't exist!";
+    res.status(errorCode);
+    return res.render("error", { user, errorMsg, errorCode });
   }
-  
-  if (!(urlDatabase[shortURL].userId === userId)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
-    };
 
+  //Check for credentials
+  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+    let errorCode = 403;
+    let errorMsg = "You must be logged in to view or edit your shortened URLs!";
     res.status(403);
-    return res.render("error", templateVars);
+    return res.render("error", { user, errorMsg, errorCode });
   }
 
-  let templateVars = {
-    shortURL,
-    urlProps: urlDatabase[shortURL],
-    user: users[req.session.user_id]
-  };
-  res.render("urls_show", templateVars);
+  //If URL exists, user is logged in, and user owns URL, show it to them
+  res.render("urls_show", { user, shortURL, urlProps: urlDatabase[shortURL]});
 });
 
 //Redirects to index page of all shortened URLs if logged in
