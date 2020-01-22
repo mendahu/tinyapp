@@ -26,11 +26,11 @@
           <% for (let slug in urlDatabase) { 
             if (urlDatabase[slug].url) { %>
             <tr>
-              <td><%= slug %></td>
-              <td><%= urlDatabase[slug].url %></td>
-              <td><%= urlDatabase[slug].count %></td>
-              <td><a href="/urls/<%= slug %>" class="btn btn-success">Edit</a></td>
-              <td><form method="POST" action="/urls/<%= slug %>/delete"><button class="btn btn-danger">Delete</button></form></td>
+              <td class="align-middle"><%= slug %></td>
+              <td class="align-middle"><%= urlDatabase[slug].url %></td>
+              <td class="align-middle"><%= urlDatabase[slug].count %></td>
+              <td class="align-middle"><a href="/urls/<%= slug %>" class="btn btn-success">Edit</a></td>
+              <td class="align-middle"><form method="POST" action="/urls/<%= slug %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             </tr>
           <% }; } %>
         </tbody>

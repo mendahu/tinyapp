@@ -40,12 +40,6 @@ const urlDatabase = {
 //user database
 const users = {
 
-  "0x000000": {
-    email: "admin@admin.com",
-    password: "password",
-    id: "0x000000"
-  },
-
   //method adds new user given email and password. generates unique 8 digit alphanumeric ID
   addUser: function(email, password) {
     let randomID = generateRandomString(8);
