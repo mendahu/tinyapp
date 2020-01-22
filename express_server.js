@@ -56,15 +56,11 @@ app.get("/u/:shortURL", (req, res) => {
 
 //Redirects to new shorten URL page
 app.get("/urls/new", (req, res) => {
+  let userId = req.session.user_id; //gets userId from login cookie
 
-  if (!req.session.user_id) {
-    return res.redirect("/login");
-  }
-
-  let templateVars = {
-    user: users[req.session.user_id]
-  };
-  res.render("urls_new", templateVars);
+  (userId)
+    ? res.render("urls_new", { user: users[userId] })
+    : res.redirect("/login");
 });
 
 //Redirects to view an existing shortened URL page
