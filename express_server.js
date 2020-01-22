@@ -31,7 +31,6 @@ app.get("/u/:shortURL", (req, res) => {
     let longURL = urlDatabase[slug].url;
 
     let visitorId;
-    console.log(res.cookies);
     //log a cookie with a unique id
     if (!req.cookies) {
       let string = generateRandomString(10);
@@ -107,9 +106,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.status(403);
     return res.render("error", templateVars);
   }
-
-  console.log(urlDatabase[shortURL].visitCount);
-
+  
   let templateVars = {
     shortURL,
     urlProps: urlDatabase[shortURL],

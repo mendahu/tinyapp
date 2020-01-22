@@ -18,7 +18,6 @@ const urlDatabase = {
       timeStamp: new Date()
     };
     this[slug].visits.push(visit);
-    console.log(this[slug].visits);
   },
 
   //changes a URL
