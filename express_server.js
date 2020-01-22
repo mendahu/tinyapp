@@ -16,7 +16,7 @@ const app = express();
 app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
-  keys: ["soyuz", "vostok", "voskhod", "molniya"],
+  keys: ["soyuz-vostok-voskhod-molniya"],
 }));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -106,7 +106,7 @@ app.get("/urls/:shortURL", (req, res) => {
     res.status(403);
     return res.render("error", templateVars);
   }
-  
+
   let templateVars = {
     shortURL,
     urlProps: urlDatabase[shortURL],
