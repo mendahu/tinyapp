@@ -68,8 +68,6 @@ const users = {
 
   verifyPass(email, password) {
     let userId = this.getUserIdByEmail(email);
-    console.log(users);
-    console.log(password);
     return (bcrypt.compareSync(password, this[userId].password));
   }
 
