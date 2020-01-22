@@ -62,10 +62,28 @@ app.get("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id;
 
   if (!userId) {
-    return res.redirect("/login");
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "You must be loggedd in to view or edit your shortened URLs!"
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
   
   let shortURL = req.params.shortURL;
+
+  if (!urlDatabase[shortURL]) {
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 404,
+      errorMsg: "That shortened URL doesn't exist!"
+    };
+
+    res.status(404);
+    return res.render("error", templateVars);
+  }
   
   if (!(urlDatabase[shortURL].userId === userId)) {
     let templateVars = {
