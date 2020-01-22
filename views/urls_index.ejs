@@ -25,14 +25,14 @@
           </tr>
         </thead>
         <tbody>
-          <% for (let slug in urlDatabase) { 
-            if (urlDatabase[slug].url) { %>
+          <% for (let slug in urls) { 
+            if (urls[slug].url) { %>
             <tr>
               <td class="align-middle"><%= slug %></td>
-              <td class="align-middle"><%= urlDatabase[slug].url %></td>
-              <td class="align-middle"><%= urlDatabase[slug].visitCount %></td>
-              <td class="align-middle"><%= urlDatabase[slug].uniqueVisitCount %></td>
-              <td class="align-middle"><%= urlDatabase[slug].date %></td>
+              <td class="align-middle"><%= urls[slug].url %></td>
+              <td class="align-middle"><%= urls[slug].visitCount %></td>
+              <td class="align-middle"><%= urls[slug].uniqueVisitCount %></td>
+              <td class="align-middle"><%= urls[slug].date %></td>
               <td class="align-middle"><a href="/urls/<%= slug %>" class="btn btn-success">Edit</a></td>
               <td class="align-middle"><form method="POST" action="/urls/<%= slug %>/delete"><button class="btn btn-danger">Delete</button></form></td>
             </tr>

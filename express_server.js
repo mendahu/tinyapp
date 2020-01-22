@@ -115,20 +115,13 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-//Redirects to index page of all shortened URLs
+//Redirects to index page of all shortened URLs if logged in
 app.get("/urls", (req, res) => {
+  let userId = req.session.user_id; //gets userId from login cookie
 
-  let userId = req.session.user_id;
-
-  if (!userId) {
-    return res.redirect("/login");
-  }
-
-  let templateVars = {
-    urlDatabase: urlDatabase.userURLs(userId),
-    user: users[userId]
-  };
-  res.render("urls_index", templateVars);
+  (userId)
+    ? res.render("urls_index", { urls: urlDatabase.userURLs(userId), user: users[userId] })
+    : res.redirect("/login");
 });
 
 //Redirects to registration page
@@ -149,7 +142,7 @@ app.get("/login", (req, res) => {
 
 //Redirects to either /urls or /login depending on if user is logged in or not
 app.get("/", (req, res) => {
-  let userId = req.session.user_id;
+  let userId = req.session.user_id; //gets userId from login cookie
 
   (userId)
     ? res.redirect("/urls")
