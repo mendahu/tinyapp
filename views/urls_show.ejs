@@ -15,7 +15,7 @@
         <p class="card-text">Date created: <%= urlProps.date %></p>
         <p class="card-text">Total redirects: <%= urlProps.visitCount %></p>
         <p class="card-text">Total unique visitors: <%= urlProps.uniqueVisitCount %></p>
-        <form class="form-inline" style="justify-content: center;" action="/urls/<%= shortURL %>" method="POST">
+        <form class="form-inline" style="justify-content: center;" action="/urls/<%= shortURL %>?_method=PUT" method="POST">
           <label for="newURL">Update URL:</label>
           <input class="form-control" type="text" name="newURL" placeholder="http://" style="width: 300px; margin: 1em">
           <button type="submit" class="btn btn-primary">Submit</button>
