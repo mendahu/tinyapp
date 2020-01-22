@@ -112,10 +112,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
   let templateVars = {
     shortURL,
-    date: urlDatabase[shortURL].date,
-    count: urlDatabase[shortURL].visitCount,
-    uniqueVisits: urlDatabase[shortURL].uniqueVisitCount,
-    longURL: urlDatabase[shortURL].url,
+    urlProps: urlDatabase[shortURL],
     user: users[req.session.user_id]
   };
   res.render("urls_show", templateVars);
