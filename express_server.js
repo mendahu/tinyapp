@@ -1,5 +1,8 @@
+//Some variables for use with the application
 const PORT = process.env.PORT || 8080;
 const slugLen = 6; // sets length of short URL slugs
+
+//import modules and requires helper apps
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
@@ -12,8 +15,6 @@ const app = express();
 app.use(cookieSession({
   name: 'session',
   keys: ["soyuz", "vostok", "voskhod", "molniya"],
-
-  // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 app.set("view engine", "ejs");
