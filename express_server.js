@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 const { generateRandomString, getVisitorId } = require('./helper');
 const { urlDatabase, users } = require('./database');
 
@@ -20,6 +21,7 @@ app.use(cookieSession({
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('views'));
+app.use(methodOverride('_method'));
 
 /*****************
 GET ROUTING
@@ -122,7 +124,7 @@ POST ROUTING
 *****************/
 
 //accepts POST request to delete URLs
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id; //gets userId from login cookie
   let user = users[userId];
   let shortURL = req.params.shortURL;

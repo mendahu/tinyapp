@@ -34,7 +34,7 @@
               <td class="align-middle"><%= urls[slug].uniqueVisitCount %></td>
               <td class="align-middle"><%= urls[slug].date %></td>
               <td class="align-middle"><a href="/urls/<%= slug %>" class="btn btn-success">Edit</a></td>
-              <td class="align-middle"><form method="POST" action="/urls/<%= slug %>/delete"><button class="btn btn-danger">Delete</button></form></td>
+              <td class="align-middle"><form method="POST" action="/urls/<%= slug %>?_method=DELETE"><button class="btn btn-danger">Delete</button></form></td>
             </tr>
           <% }; } %>
         </tbody>
