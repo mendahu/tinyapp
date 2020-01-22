@@ -151,11 +151,10 @@ app.get("/login", (req, res) => {
 app.get("/", (req, res) => {
   let userId = req.session.user_id;
 
-  if (userId) {
-    res.redirect("/urls");
-  } else {
-    res.redirect("/login");
-  }
+  (userId)
+    ? res.redirect("/urls")
+    : res.redirect("/login");
+    
 });
 
 //accepts POST request to delete URLs
