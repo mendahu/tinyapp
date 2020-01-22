@@ -68,7 +68,14 @@ app.get("/urls/:shortURL", (req, res) => {
   let shortURL = req.params.shortURL;
   
   if (!(urlDatabase[shortURL].userId === userId)) {
-    res.sendStatus(403);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in!"
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
 
   let templateVars = {
