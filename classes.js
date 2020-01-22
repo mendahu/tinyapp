@@ -26,6 +26,13 @@ class Url {
   get visitCount() {
     return this.visits.length;
   }
+
+  get uniqueVisitCount() {
+    let filteredArray = this.visits.map(x => x.visitorId);
+    let uniqueVisits = filteredArray.filter((item, index) => filteredArray.indexOf(item) === index);
+    return uniqueVisits.length;
+  }
+
 }
 
 module.exports = { User, Url };

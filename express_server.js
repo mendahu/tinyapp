@@ -107,6 +107,7 @@ app.get("/urls/:shortURL", (req, res) => {
     shortURL,
     date: urlDatabase[shortURL].date,
     count: urlDatabase[shortURL].visitCount,
+    uniqueVisits: urlDatabase[shortURL].uniqueVisitCount,
     longURL: urlDatabase[shortURL].url,
     user: users[req.session.user_id]
   };
