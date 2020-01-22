@@ -71,7 +71,7 @@ app.get("/urls/:shortURL", (req, res) => {
     let templateVars = {
       user: users[req.session.user_id],
       errorCode: 403,
-      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in!"
+      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
     };
 
     res.status(403);
@@ -80,6 +80,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
   let templateVars = {
     shortURL,
+    date: urlDatabase[shortURL].date,
     longURL: urlDatabase[shortURL].url,
     user: users[req.session.user_id]
   };
@@ -129,7 +130,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   let userId = req.session.user_id;
 
   if (!(urlDatabase[slug].userId === userId)) {
-    return res.sendStatus(403);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
   
   //check if URL exists
@@ -154,7 +162,14 @@ app.post("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id;
   
   if (!(urlDatabase[shortURL].userId === userId)) {
-    return res.sendStatus(403);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
   
   let longURL = req.body["newURL"];
@@ -183,7 +198,14 @@ app.post("/urls", (req, res) => {
   let userId = req.session.user_id;
 
   if (!userId) {
-    res.sendStatus(403);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "You must be logged in to create shorted URLs!"
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
 
   let slug = generateRandomString(slugLen);
@@ -200,12 +222,26 @@ app.post("/register", (req, res) => {
 
   //Checks if email and/or password strings were empty
   if (!(email || password)) {
-    return res.sendStatus(400);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 400,
+      errorMsg: "Either your email or password fields were empty! Try again."
+    };
+
+    res.status(400);
+    return res.render("error", templateVars);
   }
   
   //checks if email was already in use
   if (users.getUserIdByEmail(email)) {
-    return res.sendStatus(400);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 400,
+      errorMsg: "That email already has an acccount!"
+    };
+
+    res.status(400);
+    return res.render("error", templateVars);
   }
 
   let hashedPassword = bcrypt.hashSync(password, 10);
@@ -223,7 +259,14 @@ app.post("/login", (req, res) => {
 
   //Checks if email and/or password strings were empty
   if (!(email || password)) {
-    return res.sendStatus(400);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 400,
+      errorMsg: "Either your email or password fields were empty! Try again."
+    };
+
+    res.status(400);
+    return res.render("error", templateVars);
   }
   
   let userId = users.getUserIdByEmail(req.body.email) || false;
@@ -232,8 +275,14 @@ app.post("/login", (req, res) => {
     req.session["user_id"] = userId;
     res.redirect(`/urls`);
   } else {
-    res.sendStatus(403);
-    res.redirect(`/urls`);
+    let templateVars = {
+      user: users[req.session.user_id],
+      errorCode: 403,
+      errorMsg: "Incorrect username or password. Please try again!"
+    };
+
+    res.status(403);
+    return res.render("error", templateVars);
   }
 
 });

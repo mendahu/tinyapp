@@ -10,9 +10,9 @@
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-        <h5 class="card-title">Error</h5>
-        <p class="card-text">Error Message</p>
-        
+        <h5 class="card-title">Error <%= errorCode %></h5>
+        <p class="card-text"><%= errorMsg %></p>
+        <p class="card-text">Try logging in <a href="/login">here!</a></p>
       </div>
     <div class="card-footer text-muted"></div>
   </div>
