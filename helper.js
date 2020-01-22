@@ -16,4 +16,13 @@ const generateRandomString = function(len) {
   return randomString;
 };
 
-module.exports = { generateRandomString };
+//takes a cookie object and returns the visitor ID or a false if one doesn't exist
+const getVisitorId = function(cookieObject) {
+  if (cookieObject["visitor_id"]) {
+    return cookieObject["visitor_id"];
+  } else {
+    return false;
+  }
+};
+
+module.exports = { generateRandomString, getVisitorId };

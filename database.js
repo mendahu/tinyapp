@@ -12,7 +12,7 @@ const urlDatabase = {
   },
 
   //increments the count of a URL redirect
-  addVisit: function(slug, visitorId) {
+  logVisit: function(slug, visitorId) {
     let visit = {
       visitorId,
       timeStamp: new Date()

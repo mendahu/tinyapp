@@ -8,7 +8,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const { generateRandomString } = require('./helper');
+const { generateRandomString, getVisitorId } = require('./helper');
 const { urlDatabase, users } = require('./database');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
@@ -26,32 +26,21 @@ app.use(express.static('views'));
 app.get("/u/:shortURL", (req, res) => {
   let slug = req.params.shortURL;
 
-  //check if the shortened URL actually exists
-  if (urlDatabase[slug].slug === slug) {
-    let longURL = urlDatabase[slug].url;
-
-    let visitorId;
-    //log a cookie with a unique id
-    if (!req.cookies) {
-      let string = generateRandomString(10);
-      res.cookie("visitor_id", string, { maxAge: 31536000});
-      visitorId = string;
-    } else {
-      visitorId = req.cookies["visitor_id"];
-    }
-
-    //add visit to database log
-    urlDatabase.addVisit(slug, visitorId);
-    res.redirect(longURL);
-
-  //if URL doesn't exist, send user to error page
-  } else {
-    let templateVars = {
-      badURL: slug,
-      user: users[req.session.user_id]
-    };
-    res.render("urls_error", templateVars);
+  //If URL doesn't exist, redirect user
+  if (!urlDatabase[slug].slug === slug) {
+    return res.render("urls_error", { slug, user: users[req.session.user_id] });
   }
+
+  let visitorId = getVisitorId(req.cookies); // sets visitor Id to existing cookie or false
+  if (!visitorId) {
+    //if cookie doesn't exist, make one
+    visitorId = generateRandomString(10);
+    res.cookie("visitor_id", visitorId, { maxAge: 31536000});
+  }
+
+  //add visit to database log
+  urlDatabase.logVisit(slug, visitorId);
+  res.redirect(urlDatabase[slug].url);
 });
 
 //Redirects to new shorten URL page
