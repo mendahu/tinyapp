@@ -5,6 +5,7 @@ const slugLen = 6; // sets length of short URL slugs
 //import modules and requires helper apps
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const { generateRandomString } = require('./helper');
@@ -12,6 +13,7 @@ const { urlDatabase, users } = require('./database');
 
 //fire up server, set listening port, launch cookie parser, templating engine and body parser for POST requests
 const app = express();
+app.use(cookieParser());
 app.use(cookieSession({
   name: 'session',
   keys: ["soyuz", "vostok", "voskhod", "molniya"],
@@ -28,11 +30,16 @@ app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[slug].slug === slug) {
     let longURL = urlDatabase[slug].url;
 
+    let visitorId;
+    console.log(res.cookies);
     //log a cookie with a unique id
-    if (!req.session["visitor_id"]) {
-      req.session["visitor_id"] = generateRandomString(10);
+    if (!req.cookies) {
+      let string = generateRandomString(10);
+      res.cookie("visitor_id", string);
+      visitorId = string;
+    } else {
+      visitorId = req.cookies["visitor_id"];
     }
-    let visitorId = req.session["visitor_id"];
 
     //add visit to database log
     urlDatabase.addVisit(slug, visitorId);
