@@ -10,12 +10,22 @@ const urlDatabase = {
     let year = dateStamp.getFullYear();
     let month = dateStamp.getMonth() + 1;
     let day = dateStamp.getDate();
-    this[slug] = { url: longURL, count: 0, date: year + "/" + month + "/" + day, userId };
+    this[slug] = {
+      userId,
+      url: longURL,
+      date: year + "/" + month + "/" + day,
+      visits: []
+    };
   },
 
   //increments the count of a URL redirect
-  incrCount: function(slug) {
-    this[slug].count++;
+  addVisit: function(slug, visitorId) {
+    let visit = {
+      visitorId,
+      timeStamp: new Date()
+    };
+    this[slug].visits.push(visit);
+    console.log(this[slug].visits);
   },
 
   //changes a URL

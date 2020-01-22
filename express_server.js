@@ -15,7 +15,6 @@ const app = express();
 app.use(cookieSession({
   name: 'session',
   keys: ["soyuz", "vostok", "voskhod", "molniya"],
-  maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -29,8 +28,14 @@ app.get("/u/:shortURL", (req, res) => {
   if (urlDatabase[slug]) {
     let longURL = urlDatabase[slug].url;
 
-    //increment count of redirects, send user on their way
-    urlDatabase.incrCount(slug);
+    //log a cookie with a unique id
+    if (!req.session["visitor_id"]) {
+      req.session["visitor_id"] = generateRandomString(10);
+    }
+    let visitorId = req.session["visitor_id"];
+
+    //add visit to database log
+    urlDatabase.addVisit(slug, visitorId);
     res.redirect(longURL);
 
   //if URL doesn't exist, send user to error page
