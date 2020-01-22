@@ -61,10 +61,10 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id; //gets userId from login cookie
   let user = users[userId];
-  let shortURL = req.params.shortURL;
+  let slug = req.params.shortURL;
 
   //Check if the URL actually exists
-  if (!urlDatabase[shortURL]) {
+  if (!urlDatabase[slug]) {
     let errorCode = 404;
     let errorMsg = "That shortened URL doesn't exist!";
     res.status(errorCode);
@@ -72,7 +72,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
   //Check for credentials
-  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+  if (!(userId || urlDatabase[slug].userId === userId)) {
     let errorCode = 403;
     let errorMsg = "You must be logged in to view or edit your shortened URLs!";
     res.status(403);
@@ -80,7 +80,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
   //If URL exists, user is logged in, and user owns URL, show it to them
-  res.render("urls_show", { user, shortURL, urlProps: urlDatabase[shortURL]});
+  res.render("urls_show", { user, slug, urlProps: urlDatabase[slug]});
 });
 
 //Redirects to index page of all shortened URLs if logged in
@@ -179,11 +179,11 @@ PUT ROUTING
 app.put("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id; //gets userId from login cookie
   let user = users[userId];
-  let shortURL = req.params.shortURL;
+  let slug = req.params.shortURL;
   let longURL = req.body["newURL"];
 
   //Check if the URL actually exists
-  if (!urlDatabase[shortURL]) {
+  if (!urlDatabase[slug]) {
     let errorCode = 404;
     let errorMsg = "The shortened URL you're trying to change doesn't exist!";
     res.status(errorCode);
@@ -191,7 +191,7 @@ app.put("/urls/:shortURL", (req, res) => {
   }
   
   //Check for credentials
-  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+  if (!(userId || urlDatabase[slug].userId === userId)) {
     let errorCode = 403;
     let errorMsg = "You must be logged in to edit shortened URLs!";
     res.status(403);
@@ -199,8 +199,8 @@ app.put("/urls/:shortURL", (req, res) => {
   }
   
   //update the database and send user to url page
-  urlDatabase.updateURL(shortURL, longURL);
-  res.redirect(`/urls/${shortURL}`);
+  urlDatabase.updateURL(slug, longURL);
+  res.redirect(`/urls/${slug}`);
 });
 
 //Accepts PUT requests to log user in by sending them a cookie
@@ -233,10 +233,10 @@ DELETE ROUTING
 app.delete("/urls/:shortURL", (req, res) => {
   let userId = req.session.user_id; //gets userId from login cookie
   let user = users[userId];
-  let shortURL = req.params.shortURL;
+  let slug = req.params.shortURL;
 
   //Check if the URL actually exists
-  if (!urlDatabase[shortURL]) {
+  if (!urlDatabase[slug]) {
     let errorCode = 404;
     let errorMsg = "The shortened URL you're trying to delete doesn't exist!";
     res.status(errorCode);
@@ -244,7 +244,7 @@ app.delete("/urls/:shortURL", (req, res) => {
   }
   
   //Check for credentials
-  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+  if (!(userId || urlDatabase[slug].userId === userId)) {
     let errorCode = 403;
     let errorMsg = "You must be logged in to delete shortened URLs!";
     res.status(403);
@@ -252,7 +252,7 @@ app.delete("/urls/:shortURL", (req, res) => {
   }
   
   //Delete the URL and redirect the user
-  urlDatabase.delURL(shortURL);
+  urlDatabase.delURL(slug);
   res.redirect("../");
 });
 
