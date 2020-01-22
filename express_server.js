@@ -198,36 +198,28 @@ app.post("/urls", (req, res) => {
 //Accepts POST requests to register a user in the database
 app.post("/register", (req, res) => {
   let { email, password } = req.body;
+  let userId = users.getUserIdByEmail(email) || false;
 
-  //Checks if email and/or password strings were empty
+  //checks if email or password were empty
   if (!(email || password)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 400,
-      errorMsg: "Either your email or password fields were empty! Try again."
-    };
-
-    res.status(400);
-    return res.render("error", templateVars);
+    let errorCode = 400;
+    let errorMsg = "Account creation requires a username and password";
+    res.status(errorCode);
+    return res.render("error", { user: "", errorMsg, errorCode });
   }
-  
-  //checks if email was already in use
-  if (users.getUserIdByEmail(email)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 400,
-      errorMsg: "That email already has an acccount!"
-    };
 
-    res.status(400);
-    return res.render("error", templateVars);
+  //checks if email was already in use
+  if (userId) {
+    let errorCode = 400;
+    let errorMsg = "That email already has an acccount!";
+    res.status(errorCode);
+    return res.render("error", { user: "", errorMsg, errorCode });
   }
 
   let hashedPassword = bcrypt.hashSync(password, 10);
 
   //creates new user in the database and returns their new unique User ID for strategic cookie purposes
   let newUserId = users.addUser(email, hashedPassword);
-
   req.session["user_id"] = newUserId;
   res.redirect(`/urls`);
 });
@@ -255,14 +247,11 @@ app.post("/logout", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-  let templateVars = {
-    user: users[req.session.user_id],
-    errorCode: 404,
-    errorMsg: "The page you requested doesn't exist!"
-  };
-
-  res.status(404);
-  return res.render("error", templateVars);
+  let user = users[req.session.user_id];
+  let errorCode = 404;
+  let errorMsg = "The page you requested doesn't exist!";
+  res.status(errorCode);
+  return res.render("error", { user, errorMsg, errorCode });
 });
 
 //Server listen
