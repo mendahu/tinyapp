@@ -81,6 +81,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL,
     date: urlDatabase[shortURL].date,
+    count: urlDatabase[shortURL].count,
     longURL: urlDatabase[shortURL].url,
     user: users[req.session.user_id]
   };
