@@ -1,14 +1,18 @@
 const { User, Url } = require('./classes');
 const bcrypt = require('bcrypt');
+const slugLen = 6; // sets length of short URL slugs
+const { generateRandomString } = require('./helper');
 
 //"database" to store url index and redirect counts
 const urlDatabase = {
 
   //adds new URL
-  addURL: function(slug, longURL, userId) {
+  addURL: function(longURL, userId) {
+    let slug = generateRandomString(slugLen);
     let newUrl = new Url(slug, longURL, userId);
     let newUrlSlug = newUrl.slug;
     this[newUrlSlug] = newUrl;
+    return slug;
   },
 
   //increments the count of a URL redirect

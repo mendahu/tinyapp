@@ -1,6 +1,5 @@
 //Some variables for use with the application
 const PORT = process.env.PORT || 8080;
-const slugLen = 6; // sets length of short URL slugs
 
 //import modules and requires helper apps
 const express = require("express");
@@ -21,6 +20,10 @@ app.use(cookieSession({
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static('views'));
+
+/*****************
+GET ROUTING
+*****************/
 
 //Redirect routing that provides actual redirection service
 app.get("/u/:shortURL", (req, res) => {
@@ -113,6 +116,10 @@ app.get("/", (req, res) => {
     
 });
 
+/*****************
+POST ROUTING
+*****************/
+
 //accepts POST request to delete URLs
 app.post("/urls/:shortURL/delete", (req, res) => {
   let slug = req.params.shortURL;
@@ -147,60 +154,48 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 //accepts POST requests to edit existing shortened URLs
 app.post("/urls/:shortURL", (req, res) => {
+  let userId = req.session.user_id; //gets userId from login cookie
+  let user = users[userId];
   let shortURL = req.params.shortURL;
-  let userId = req.session.user_id;
-  
-  if (!(urlDatabase[shortURL].userId === userId)) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "This short URL doesn't belong to you! If you think that's wrong, please ensure you're logged in with the correct account."
-    };
-
-    res.status(403);
-    return res.render("error", templateVars);
-  }
-  
   let longURL = req.body["newURL"];
 
-  //if the URL exists, update it
-  if (shortURL in urlDatabase) {
-    urlDatabase.updateURL(shortURL, longURL);
-    
-  //otherwise send to error page
-  } else {
-    let templateVars = {
-      badURL: shortURL,
-      user: users[req.session.user_id]
-    };
-    return res.render("urls_error", templateVars);
+  //Check if the URL actually exists
+  if (!urlDatabase[shortURL]) {
+    let errorCode = 404;
+    let errorMsg = "The shortened URL you're trying to change doesn't exist!";
+    res.status(errorCode);
+    return res.render("error", { user, errorMsg, errorCode });
   }
   
-  //send back to URL page
+  //Check for credentials
+  if (!(userId || urlDatabase[shortURL].userId === userId)) {
+    let errorCode = 403;
+    let errorMsg = "You must be logged in to edit shortened URLs!";
+    res.status(403);
+    return res.render("error", { user, errorMsg, errorCode });
+  }
+  
+  //update the database and send user to url page
+  urlDatabase.updateURL(shortURL, longURL);
   res.redirect(`/urls/${shortURL}`);
 });
 
 //Accepts POST requests to add a new URL
 app.post("/urls", (req, res) => {
+  let userId = req.session.user_id; //gets userId from login cookie
+  let user = users[userId];
 
-  let userId = req.session.user_id;
-
+  //IF the user is not logged in
   if (!userId) {
-    let templateVars = {
-      user: users[req.session.user_id],
-      errorCode: 403,
-      errorMsg: "You must be logged in to create shorted URLs!"
-    };
-
-    res.status(403);
-    return res.render("error", templateVars);
+    let errorCode = 403;
+    let errorMsg = "You must be logged in to create shorted URLs!";
+    res.status(errorCode);
+    return res.render("error", { user, errorMsg, errorCode });
   }
 
-  let slug = generateRandomString(slugLen);
+  //Add new URL and redirect to it
   let longURL = req.body["longURL"];
-
-  urlDatabase.addURL(slug, longURL, userId);
-
+  let slug = urlDatabase.addURL(longURL, userId);
   res.redirect(`/urls/${slug}`);
 });
 
