@@ -147,9 +147,15 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//Will redirect to correct landing page based on login; for now goes to URL index
+//Redirects to either /urls or /login depending on if user is logged in or not
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  let userId = req.session.user_id;
+
+  if (userId) {
+    res.redirect("/urls");
+  } else {
+    res.redirect("/login");
+  }
 });
 
 //accepts POST request to delete URLs
