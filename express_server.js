@@ -171,6 +171,28 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
+//Accepts POST requests to log user in by sending them a cookie
+app.post("/login", (req, res) => {
+  let { email, password } = req.body;
+  let userId = users.getUserIdByEmail(email) || false;
+
+  if (!(userId && users.verifyPass(email, password))) {
+    let errorCode = 403;
+    let errorMsg = "Incorrect username or password. Please try again!";
+    res.status(errorCode);
+    return res.render("error", { user: "", errorMsg, errorCode });
+  }
+
+  req.session["user_id"] = userId;
+  res.redirect(`/urls`);
+});
+
+//Accepts POST requests to log user out by deleting their cookie
+app.post("/logout", (req, res) => {
+  req.session = null;
+  res.redirect(`/urls`);
+});
+
 /*****************
 PUT ROUTING
 *****************/
@@ -201,28 +223,6 @@ app.put("/urls/:shortURL", (req, res) => {
   //update the database and send user to url page
   urlDatabase.updateURL(slug, longURL);
   res.redirect(`/urls/${slug}`);
-});
-
-//Accepts PUT requests to log user in by sending them a cookie
-app.put("/login", (req, res) => {
-  let { email, password } = req.body;
-  let userId = users.getUserIdByEmail(email) || false;
-
-  if (!(userId && users.verifyPass(email, password))) {
-    let errorCode = 403;
-    let errorMsg = "Incorrect username or password. Please try again!";
-    res.status(errorCode);
-    return res.render("error", { user: "", errorMsg, errorCode });
-  }
-
-  req.session["user_id"] = userId;
-  res.redirect(`/urls`);
-});
-
-//Accepts PUT requests to log user out by deleting their cookie
-app.put("/logout", (req, res) => {
-  req.session = null;
-  res.redirect(`/urls`);
 });
 
 /*****************
