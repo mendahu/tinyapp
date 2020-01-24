@@ -72,7 +72,7 @@ app.get("/urls/:shortURL", (req, res) => {
   }
 
   //Check for credentials
-  if (!(userId || urlDatabase[slug].userId === userId)) {
+  if (!(urlDatabase[slug].userId === userId)) {
     let errorCode = 403;
     let errorMsg = "You must be logged in to view or edit your shortened URLs!";
     res.status(403);
@@ -213,7 +213,7 @@ app.put("/urls/:shortURL", (req, res) => {
   }
   
   //Check for credentials
-  if (!(userId || urlDatabase[slug].userId === userId)) {
+  if (!(urlDatabase[slug].userId === userId)) {
     let errorCode = 403;
     let errorMsg = "You must be logged in to edit shortened URLs!";
     res.status(403);
